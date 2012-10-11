@@ -10,8 +10,8 @@
 #import "CustomBadge.h"
 
 #define kBadgeAnimationDuration 0.5
-#define kButtonCheckInTag 700
-#define kButtonCheckOutTag 701
+#define BUTTON_CHECK_IN_TAG  700
+#define BUTTON_CHECK_OUT_TAG 701
 
 @interface CPThinTabBar()
 
@@ -362,8 +362,8 @@ static NSArray *tabBarIcons;
     
     // Refresh checkInOutbutton when button doesn't match current status.
     BOOL isCheckedIn = [CPUserDefaultsHandler isUserCurrentlyCheckedIn];
-    if ((isCheckedIn && (self.checkInOutButton.tag == kButtonCheckInTag)) ||
-        (!isCheckedIn && (self.checkInOutButton.tag == kButtonCheckOutTag)))
+    if ((isCheckedIn && (self.checkInOutButton.tag == BUTTON_CHECK_IN_TAG)) ||
+        (!isCheckedIn && (self.checkInOutButton.tag == BUTTON_CHECK_OUT_TAG)))
     {
         [self refreshCheckinButton];
     }
@@ -400,7 +400,7 @@ static NSArray *tabBarIcons;
 
 -(int)checkInOutTag
 {
-    return [CPUserDefaultsHandler isUserCurrentlyCheckedIn] ? kButtonCheckOutTag : kButtonCheckInTag;
+    return [CPUserDefaultsHandler isUserCurrentlyCheckedIn] ? BUTTON_CHECK_OUT_TAG : BUTTON_CHECK_IN_TAG;
 }
 
 
