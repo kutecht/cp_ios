@@ -10,6 +10,8 @@
 #import "CustomBadge.h"
 
 #define kBadgeAnimationDuration 0.5
+#define kButtonCheckInTag 700
+#define kButtonCheckOutTag 701
 
 @interface CPThinTabBar()
 
@@ -39,10 +41,7 @@ static NSArray *tabBarIcons;
                        [UIImage imageNamed:@"tab-login"], nil];
     }
 }
--(void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
+
 
 + (UIImage *)backgroundImage
 {
@@ -293,13 +292,8 @@ static NSArray *tabBarIcons;
     [self.actionMenuButtons addObject:[self actionMenuButtonWithImageSuffix:@"question" topMargin:QUESTION_BUTTON_TOP_MARGIN tabBarControllerAction:@selector(questionButtonPressed:)]];
     
     self.checkInOutButton = [self actionMenuButtonWithImageSuffix:[self checkInOutImageSuffix] topMargin:CHECKIN_BUTTON_TOP_MARGIN tabBarControllerAction:@selector(checkinButtonPressed:)];
+    self.checkInOutButton.tag = [self checkInOutTag];
     [self.actionMenuButtons addObject:self.checkInOutButton];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(refreshCheckinButton)
-                                                 name:@"userCheckInStateChange"
-                                               object:nil];
-    
 }
 
 - (UIButton *)actionMenuButtonWithImageSuffix:(NSString *)imageSuffix 
@@ -365,6 +359,14 @@ static NSArray *tabBarIcons;
     } else if (self.actionButtonState == CPThinTabBarActionButtonStateMinus) {
         [self toggleActionMenu:NO];
     }
+    
+    // Refresh checkInOutbutton when button doesn't match current status.
+    BOOL isCheckedIn = [CPUserDefaultsHandler isUserCurrentlyCheckedIn];
+    if ((isCheckedIn && (self.checkInOutButton.tag == kButtonCheckInTag)) ||
+        (!isCheckedIn && (self.checkInOutButton.tag == kButtonCheckOutTag)))
+    {
+        [self refreshCheckinButton];
+    }
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
@@ -388,11 +390,18 @@ static NSArray *tabBarIcons;
 {
     UIImage *backgroundImage = [UIImage imageNamed:[NSString stringWithFormat:@"action-menu-button-%@", [self checkInOutImageSuffix]]];
     [self.checkInOutButton setBackgroundImage:backgroundImage forState:UIControlStateNormal];
+    self.checkInOutButton.tag = [self checkInOutTag];
 }
 
 -(NSString *)checkInOutImageSuffix
 {
     return [CPUserDefaultsHandler isUserCurrentlyCheckedIn] ? @"check-out" : @"check-in";
 }
+
+-(int)checkInOutTag
+{
+    return [CPUserDefaultsHandler isUserCurrentlyCheckedIn] ? kButtonCheckOutTag : kButtonCheckInTag;
+}
+
 
 @end
