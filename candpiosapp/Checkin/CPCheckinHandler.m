@@ -94,31 +94,6 @@ static CPCheckinHandler *sharedHandler;
     }
 }
 
-+ (void)queueLocalNotificationForVenue:(CPVenue *)venue checkoutTime:(NSInteger)checkoutTime
-{
-    // Fire a notification 5 minutes before checkout time
-    NSInteger minutesBefore = 5;
-    UILocalNotification *localNotif = [[UILocalNotification alloc] init];
-    NSDictionary *venueDataDict;
-    
-    // Cancel all old local notifications
-    [[UIApplication sharedApplication] cancelAllLocalNotifications];
-    
-    localNotif.alertBody = [NSString stringWithFormat:@"You will be checked out of %@ in 5 min.", venue.name];
-    localNotif.alertAction = @"Check Out";
-    localNotif.soundName = UILocalNotificationDefaultSoundName;
-    
-    localNotif.fireDate = [NSDate dateWithTimeIntervalSince1970:(checkoutTime - minutesBefore * 60)];
-    localNotif.timeZone = [NSTimeZone defaultTimeZone];
-    
-    // encode the venue and store it in an NSDictionary
-    NSData *venueData = [NSKeyedArchiver archivedDataWithRootObject:venue];
-    venueDataDict = [NSDictionary dictionaryWithObject:venueData forKey:@"venue"];
-    
-    localNotif.userInfo = venueDataDict;
-    [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
-}
-
 - (void)setCheckedOut
 {
     // set user checkout time to now
@@ -155,7 +130,6 @@ static CPCheckinHandler *sharedHandler;
         [[CPGeofenceHandler sharedHandler] updatePastVenue:venue];
     }
     
-    [self queueLocalNotificationForVenue:venue checkoutTime:checkOutTime];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"userCheckInStateChange" object:nil];
 }
 
