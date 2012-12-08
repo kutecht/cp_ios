@@ -237,8 +237,8 @@
             [[tableView delegate] tableView:tableView didSelectRowAtIndexPath:indexPath];
         }
     }
-    if ([self.delegate respondsToSelector:@selector(cell:didSelectRowWithUser:)]) {
-        [self.delegate cell:self didSelectRowWithUser:self.user];
+    if ([tableView.delegate respondsToSelector:@selector(cell:didSelectRowWithUser:)]) {
+        [(id)tableView.delegate cell:self didSelectRowWithUser:self.user];
     }
 }
 
